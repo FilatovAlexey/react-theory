@@ -1,17 +1,22 @@
 import React, { Component } from 'react';
 import './App.css';
 import Car from './Car/Car';
+import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
+import Counter from './Counter/Counter';
 
 class App extends Component {
-  state = {
-    cars: [
-      { name: 'Ford', year: 2018 },
-      { name: 'Audi', year: 2016 },
-      { name: 'Mazda 1', year: 2010 },
-    ],
-    pageTitle: 'React Components',
-    showCars: false,
-  };
+  constructor(props) {
+    super(props);
+    this.state = {
+      cars: [
+        { name: 'Ford', year: 2018 },
+        // { name: 'Audi', year: 2016 },
+        // { name: 'Mazda 1', year: 2010 },
+      ],
+      pageTitle: 'React Components',
+      showCars: false,
+    };
+  }
 
   onChangeName(name, index) {
     const car = this.state.cars[index];
@@ -37,7 +42,11 @@ class App extends Component {
     });
   }
 
+  componentDidMount() {
+    console.log('App componentDidMount');
+  }
   render() {
+    console.log('App render');
     const divStyle = {
       textAlign: 'center',
     };
@@ -45,15 +54,16 @@ class App extends Component {
     if (this.state.showCars) {
       cars = this.state.cars.map((car, index) => {
         return (
-          <Car
-            key={index}
-            name={car.name}
-            year={car.year}
-            onDelete={this.deleteHandler.bind(this, index)}
-            onChangeName={(event) => {
-              this.onChangeName(event.target.value, index);
-            }}
-          />
+          <ErrorBoundary key={index}>
+            <Car
+              name={car.name}
+              year={car.year}
+              onDelete={this.deleteHandler.bind(this, index)}
+              onChangeName={(event) => {
+                this.onChangeName(event.target.value, index);
+              }}
+            />
+          </ErrorBoundary>
         );
       });
     }
@@ -61,7 +71,11 @@ class App extends Component {
       <div style={divStyle}>
         {/* <h1>{this.state.pageTitle}</h1> */}
         <h1>{this.props.title}</h1>
-        <button onClick={this.toggleClassHandler.bind(this, 'Changed')}>
+        <Counter />
+        <button
+          style={{ marginTop: '20px' }}
+          onClick={this.toggleClassHandler.bind(this, 'Changed')}
+        >
           Toggle Cars
         </button>
         <div
